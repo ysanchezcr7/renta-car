@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang='{{lang}}'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<title>{{title}} - Bookealo</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 20px;
+				line-height: 1.6;
+			}
+			.email-wrapper {
+				max-width: 600px;
+				margin: 0 auto;
+				background: #ffffff;
+				border-radius: 20px;
+				overflow: hidden;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			}
+			.header {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 30px;
+				text-align: center;
+			}
+			.logo {
+				max-width: 140px;
+				height: auto;
+				margin-bottom: 15px;
+				filter: brightness(0) invert(1);
+			}
+			.content {
+				padding: 50px 40px;
+			}
+			.title {
+				font-size: 28px;
+				font-weight: 800;
+				color: #1a202c;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+			.greeting {
+				font-size: 18px;
+				color: #4a5568;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+			.appointment-card {
+				background: #ffffff;
+				border-radius: 16px;
+				padding: 30px;
+				margin: 30px 0;
+				border: 1px solid #e2e8f0;
+				border-left: 5px solid #48bb78;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.appointment-detail {
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+				min-height: 30px;
+			}
+			.detail-icon {
+				font-size: 20px;
+				margin-right: 12px;
+				width: 30px;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+			.detail-label {
+				font-size: 13px;
+				color: #4a5568;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				font-weight: 600;
+				min-width: 140px;
+				flex-shrink: 0;
+				display: flex;
+				align-items: center;
+			}
+			.detail-value {
+				font-size: 16px;
+				color: #2d3748;
+				font-weight: 600;
+				flex: 1;
+				display: flex;
+				align-items: center;
+				text-align: left;
+			}
+			.status-badge {
+				display: inline-block;
+				padding: 12px 24px;
+				border-radius: 50px;
+				font-weight: 700;
+				font-size: 16px;
+				margin: 20px 0;
+				text-align: center;
+				width: 100%;
+				background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+				color: #ffffff;
+			}
+			.message {
+				font-size: 16px;
+				color: #4a5568;
+				margin: 30px 0;
+				line-height: 1.8;
+				text-align: center;
+			}
+			.button-container {
+				text-align: center;
+				margin: 35px 0;
+			}
+			.action-button {
+				display: inline-block;
+				padding: 16px 35px;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #ffffff !important;
+				text-decoration: none;
+				border-radius: 12px;
+				font-weight: 700;
+				font-size: 16px;
+				box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+			}
+			.qr-section {
+				background: #ffffff;
+				border-radius: 12px;
+				padding: 30px;
+				margin: 30px 0;
+				border: 2px solid #e2e8f0;
+				text-align: center;
+			}
+			.qr-title {
+				font-size: 16px;
+				color: #2d3748;
+				margin-bottom: 20px;
+				font-weight: 700;
+			}
+			.qr-code-container {
+				display: inline-block;
+				padding: 20px;
+				background: #ffffff;
+				border-radius: 12px;
+				border: 3px solid #667eea;
+				margin-bottom: 20px;
+			}
+			.qr-code {
+				width: 200px;
+				height: 200px;
+				display: block;
+				margin: 0 auto;
+			}
+			.qr-code-text {
+				font-size: 18px;
+				color: #1a202c;
+				font-weight: 700;
+				letter-spacing: 2px;
+				margin-top: 15px;
+				font-family: 'Courier New', monospace;
+			}
+			.qr-instructions {
+				font-size: 14px;
+				color: #4a5568;
+				margin-top: 15px;
+				line-height: 1.6;
+			}
+			.claim-section {
+				background: #f0f4ff;
+				border-radius: 12px;
+				padding: 25px;
+				margin: 30px 0;
+				border: 2px dashed #667eea;
+				text-align: center;
+			}
+			.claim-message {
+				font-size: 15px;
+				color: #2d3748;
+				margin-bottom: 20px;
+				font-weight: 600;
+			}
+			.info-box {
+				background: #fffbf0;
+				border-radius: 12px;
+				padding: 20px;
+				margin: 30px 0;
+				border-left: 4px solid #f6ad55;
+				text-align: left;
+			}
+			.info-icon {
+				display: inline-block;
+				margin-right: 8px;
+				font-size: 18px;
+			}
+			.info-text {
+				font-size: 14px;
+				color: #2d3748;
+				margin: 0;
+				display: inline;
+			}
+			.footer {
+				background: #f7fafc;
+				padding: 30px 40px;
+				text-align: center;
+				border-top: 1px solid #e2e8f0;
+			}
+			.footer-links {
+				margin-bottom: 20px;
+			}
+			.footer-link {
+				color: #667eea;
+				text-decoration: none;
+				font-size: 14px;
+				margin: 0 10px;
+			}
+			.copyright {
+				font-size: 12px;
+				color: #a0aec0;
+				margin-top: 20px;
+			}
+			@media only screen and (max-width: 600px) {
+				.content {
+					padding: 30px 20px;
+				}
+				.title {
+					font-size: 24px;
+				}
+				.appointment-card {
+					padding: 20px;
+				}
+				.appointment-detail {
+					flex-wrap: wrap;
+					align-items: flex-start;
+				}
+				.detail-icon {
+					width: 25px;
+					margin-right: 10px;
+					font-size: 18px;
+				}
+				.detail-label {
+					min-width: 120px;
+					font-size: 12px;
+					margin-bottom: 4px;
+				}
+				.detail-value {
+					font-size: 14px;
+					width: 100%;
+					margin-left: 40px;
+				}
+				.qr-section {
+					padding: 20px;
+				}
+				.qr-code {
+					width: 150px;
+					height: 150px;
+				}
+				.qr-code-text {
+					font-size: 16px;
+					letter-spacing: 1px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class='email-wrapper'>
+			<div class='header'>
+				<img class='logo' src='https://res.cloudinary.com/dux5ebiqb/image/upload/v1748394763/logo_bokealo.png' alt='Bookealo Logo' />
+			</div>
+			<div class='content'>
+				<h1 class='title'>{{title}}</h1>
+				<p class='greeting'>{{greeting}}</p>
+				<div class='appointment-card'>
+					{{#if serviceName}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>💼</span>
+						<span class='detail-label'>{{serviceNameLabel}}</span>
+						<span class='detail-value'>{{serviceName}}</span>
+					</div>
+					{{/if}}
+					{{#if businessName}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>🏢</span>
+						<span class='detail-label'>{{businessNameLabel}}</span>
+						<span class='detail-value'>{{businessName}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentDate}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>📆</span>
+						<span class='detail-label'>{{appointmentDateLabel}}</span>
+						<span class='detail-value'>{{appointmentDate}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentTime}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>🕐</span>
+						<span class='detail-label'>{{appointmentTimeLabel}}</span>
+						<span class='detail-value'>{{appointmentTime}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentAddress}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>📍</span>
+						<span class='detail-label'>{{appointmentAddressLabel}}</span>
+						<span class='detail-value'>{{appointmentAddress}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentCode}}
+					<div class='appointment-detail'>
+						<span class='detail-icon'>🔑</span>
+						<span class='detail-label'>{{appointmentCodeLabel}}</span>
+						<span class='detail-value'>{{appointmentCode}}</span>
+					</div>
+					{{/if}}
+				</div>
+				<div class='status-badge'>
+					✅ {{title}}
+				</div>
+				<p class='message'>{{message}}</p>
+				{{#if appointmentCode}}
+				<div class='qr-section'>
+					<div class='qr-title'>{{qrCodeTitle}}</div>
+					<div class='qr-code-container'>
+						<img src='{{qrCodeUrl}}' alt='QR Code' class='qr-code' />
+						<div class='qr-code-text'>{{appointmentCode}}</div>
+					</div>
+					<p class='qr-instructions'>{{qrInstructions}}</p>
+				</div>
+				{{/if}}
+			</div>
+			<div class='footer'>
+				<div class='footer-links'>
+					<a href='mailto:bookealoapp@gmail.com' class='footer-link'>{{support}}</a>
+					<span>|</span>
+					<a href='https://www.bookealoapp.com/' class='footer-link'>{{website}}</a>
+				</div>
+				<p class='copyright'>{{copyright}}</p>
+			</div>
+		</div>
+	</body>
+</html>
+

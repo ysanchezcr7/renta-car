@@ -1,0 +1,44 @@
+// Template base: Auth + Users con JWT y Prisma
+// Añade aquí tus modelos según el proyecto (Business, Booking, etc.)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Roles {
+  CUSTOMER
+  OWNER
+  SUPERADMIN
+}
+
+model User {
+  user_id                   Int       @id @default(autoincrement())
+  email                     String    @unique
+  password                  String
+  name                      String
+  lastName                  String
+  middleName                String?
+  phone                     String?
+  image                     String?
+  role                      Roles     @default(CUSTOMER)
+  deviceToken               String?
+  referralBusinessId        Int?
+  isVerified                Boolean   @default(false)
+  verificationToken         String?
+  verificationTokenExpiry   DateTime?
+  deletedAt                 DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

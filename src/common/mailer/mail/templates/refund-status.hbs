@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang='{{lang}}'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<title>{{title}} - Bookealo</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 20px;
+				line-height: 1.6;
+			}
+			.email-wrapper {
+				max-width: 600px;
+				margin: 0 auto;
+				background: #ffffff;
+				border-radius: 20px;
+				overflow: hidden;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			}
+			.header {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 30px;
+				text-align: center;
+			}
+			.logo {
+				max-width: 140px;
+				height: auto;
+				margin-bottom: 15px;
+				filter: brightness(0) invert(1);
+			}
+			.content {
+				padding: 50px 40px;
+			}
+			.title {
+				font-size: 28px;
+				font-weight: 800;
+				color: #1a202c;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+			.greeting {
+				font-size: 18px;
+				color: #4a5568;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+			.refund-card {
+				border-radius: 16px;
+				padding: 30px;
+				margin: 30px 0;
+			}
+			.refund-card.has-refund {
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-left: 5px solid #3b82f6;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.refund-card.no-refund {
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-left: 5px solid #e53e3e;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.payment-detail {
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+				min-height: 30px;
+			}
+			.detail-icon {
+				font-size: 20px;
+				margin-right: 12px;
+				width: 30px;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+			.detail-label {
+				font-size: 13px;
+				color: #4a5568;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				font-weight: 600;
+				min-width: 140px;
+				flex-shrink: 0;
+				display: flex;
+				align-items: center;
+			}
+			.detail-value {
+				font-size: 16px;
+				color: #2d3748;
+				font-weight: 600;
+				flex: 1;
+				display: flex;
+				align-items: center;
+				text-align: left;
+			}
+			.refund-amount-value {
+				font-size: 24px;
+				color: #3b82f6;
+				font-weight: 700;
+			}
+			.no-refund-amount-value {
+				font-size: 20px;
+				color: #e53e3e;
+				font-weight: 700;
+			}
+			.original-amount-value {
+				font-size: 16px;
+				color: #4a5568;
+				text-decoration: line-through;
+			}
+			.status-badge {
+				display: inline-block;
+				padding: 12px 24px;
+				border-radius: 50px;
+				font-weight: 700;
+				font-size: 16px;
+				margin: 20px 0;
+				text-align: center;
+				width: 100%;
+				color: #ffffff;
+			}
+			.status-badge.has-refund {
+				background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+			}
+			.status-badge.no-refund {
+				background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+			}
+			.message {
+				font-size: 16px;
+				color: #4a5568;
+				margin: 30px 0;
+				line-height: 1.8;
+				text-align: center;
+			}
+			.button-container {
+				text-align: center;
+				margin: 35px 0;
+			}
+			.action-button {
+				display: inline-block;
+				padding: 16px 35px;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #ffffff !important;
+				text-decoration: none;
+				border-radius: 12px;
+				font-weight: 700;
+				font-size: 16px;
+				box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+			}
+			.info-box {
+				background: #fffbf0;
+				border-radius: 12px;
+				padding: 20px;
+				margin: 30px 0;
+				border-left: 4px solid #f6ad55;
+				text-align: left;
+			}
+			.warning-box {
+				background: #fff5f5;
+				border-radius: 12px;
+				padding: 20px;
+				margin: 30px 0;
+				border-left: 4px solid #e53e3e;
+				text-align: left;
+			}
+			.info-icon {
+				display: inline-block;
+				margin-right: 8px;
+				font-size: 18px;
+			}
+			.info-text {
+				font-size: 14px;
+				color: #2d3748;
+				margin: 0;
+				display: inline;
+			}
+			.warning-text {
+				font-size: 14px;
+				color: #c53030;
+				margin: 0;
+				display: inline;
+				font-weight: 600;
+			}
+			.footer {
+				background: #f7fafc;
+				padding: 30px 40px;
+				text-align: center;
+				border-top: 1px solid #e2e8f0;
+			}
+			.footer-links {
+				margin-bottom: 20px;
+			}
+			.footer-link {
+				color: #667eea;
+				text-decoration: none;
+				font-size: 14px;
+				margin: 0 10px;
+			}
+			.copyright {
+				font-size: 12px;
+				color: #a0aec0;
+				margin-top: 20px;
+			}
+			@media only screen and (max-width: 600px) {
+				.content {
+					padding: 30px 20px;
+				}
+				.title {
+					font-size: 24px;
+				}
+				.refund-card {
+					padding: 20px;
+				}
+				.payment-detail {
+					flex-wrap: wrap;
+					align-items: flex-start;
+				}
+				.detail-icon {
+					width: 25px;
+					margin-right: 10px;
+					font-size: 18px;
+				}
+				.detail-label {
+					min-width: 120px;
+					font-size: 12px;
+					margin-bottom: 4px;
+				}
+				.detail-value {
+					font-size: 14px;
+					width: 100%;
+					margin-left: 40px;
+				}
+				.refund-amount-value, .no-refund-amount-value {
+					font-size: 18px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class='email-wrapper'>
+			<div class='header'>
+				<img class='logo' src='https://res.cloudinary.com/dux5ebiqb/image/upload/v1748394763/logo_bokealo.png' alt='Bookealo Logo' />
+			</div>
+			<div class='content'>
+				<h1 class='title'>{{title}}</h1>
+				<p class='greeting'>{{greeting}}</p>
+				<div class='refund-card {{#if hasRefund}}has-refund{{else}}no-refund{{/if}}'>
+					{{#if hasRefund}}
+						{{#if refundAmount}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>💵</span>
+							<span class='detail-label'>{{refundAmountLabel}}</span>
+							<span class='detail-value refund-amount-value'>{{refundAmount}}</span>
+						</div>
+						{{/if}}
+						{{#if originalAmount}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>💰</span>
+							<span class='detail-label'>{{originalAmountLabel}}</span>
+							<span class='detail-value original-amount-value'>{{originalAmount}}</span>
+						</div>
+						{{/if}}
+						{{#if platformFee}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>🏛️</span>
+							<span class='detail-label'>{{platformFeeLabel}}</span>
+							<span class='detail-value' style='color: #e53e3e;'>{{platformFee}} (No reembolsable)</span>
+						</div>
+						{{/if}}
+						{{#if refundPercentage}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>📊</span>
+							<span class='detail-label'>{{refundPercentageLabel}}</span>
+							<span class='detail-value'>{{refundPercentage}}</span>
+						</div>
+						{{/if}}
+						{{#if refundId}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>🔖</span>
+							<span class='detail-label'>{{refundIdLabel}}</span>
+							<span class='detail-value' style='font-family: monospace; font-size: 12px;'>{{refundId}}</span>
+						</div>
+						{{/if}}
+					{{else}}
+						{{#if depositAmount}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>💰</span>
+							<span class='detail-label'>{{depositAmountLabel}}</span>
+							<span class='detail-value no-refund-amount-value'>{{depositAmount}}</span>
+						</div>
+						{{/if}}
+						{{#if hoursUntil}}
+						<div class='payment-detail'>
+							<span class='detail-icon'>⏰</span>
+							<span class='detail-label'>{{hoursUntilLabel}}</span>
+							<span class='detail-value' style='color: #e53e3e;'>{{hoursUntil}} horas</span>
+						</div>
+						{{/if}}
+					{{/if}}
+					{{#if serviceName}}
+					<div class='payment-detail'>
+						<span class='detail-icon'>💼</span>
+						<span class='detail-label'>{{serviceNameLabel}}</span>
+						<span class='detail-value'>{{serviceName}}</span>
+					</div>
+					{{/if}}
+					{{#if businessName}}
+					<div class='payment-detail'>
+						<span class='detail-icon'>🏢</span>
+						<span class='detail-label'>{{businessNameLabel}}</span>
+						<span class='detail-value'>{{businessName}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentDate}}
+					<div class='payment-detail'>
+						<span class='detail-icon'>📆</span>
+						<span class='detail-label'>{{appointmentDateLabel}}</span>
+						<span class='detail-value'>{{appointmentDate}}</span>
+					</div>
+					{{/if}}
+					{{#if appointmentTime}}
+					<div class='payment-detail'>
+						<span class='detail-icon'>🕐</span>
+						<span class='detail-label'>{{appointmentTimeLabel}}</span>
+						<span class='detail-value'>{{appointmentTime}}</span>
+					</div>
+					{{/if}}
+				</div>
+				<div class='status-badge {{#if hasRefund}}has-refund{{else}}no-refund{{/if}}'>
+					{{#if hasRefund}}✅{{else}}⚠️{{/if}} {{title}}
+				</div>
+				<p class='message'>
+					{{message}}
+					<br /><br />
+					{{submessage}}
+				</p>
+				{{#if dashboardLink}}
+				<div class='button-container'>
+					<a href='{{dashboardLink}}' class='action-button'>{{button}}</a>
+				</div>
+				{{/if}}
+				{{#if info}}
+				<div class='info-box'>
+					<span class='info-icon'>💡</span>
+					<p class='info-text'>{{info}}</p>
+				</div>
+				{{/if}}
+				{{#if feeInfo}}
+				<div class='warning-box'>
+					<span class='info-icon'>⚠️</span>
+					<p class='warning-text'>{{feeInfo}}</p>
+				</div>
+				{{/if}}
+				{{#if policyInfo}}
+				<div class='warning-box'>
+					<span class='info-icon'>📋</span>
+					<p class='warning-text'>{{policyInfo}}</p>
+				</div>
+				{{/if}}
+			</div>
+			<div class='footer'>
+				<div class='footer-links'>
+					<a href='mailto:bookealoapp@gmail.com' class='footer-link'>{{support}}</a>
+					<span>|</span>
+					<a href='https://www.bookealoapp.com/' class='footer-link'>{{website}}</a>
+				</div>
+				<p class='copyright'>{{copyright}}</p>
+			</div>
+		</div>
+	</body>
+</html>
+

@@ -1,0 +1,229 @@
+{
+	"otp": {
+		"subject": "Tu código de verificación",
+		"greeting": "¡Hola! 👋",
+		"message": "Necesitas un código de verificación para {{actionDescription}}.",
+		"useCode": "Utiliza el siguiente código:",
+		"codeLabel": "Tu código de verificación",
+		"warning": "⚠️ Este código es válido por 10 minutos. No lo compartas con nadie.",
+		"info": "Si no solicitaste esta acción, puedes ignorar este mensaje o contactar a nuestro equipo de soporte."
+	},
+	"verify_email": {
+		"subject": "Tu enlace de verificación de email",
+		"title": "¡Bienvenido a Bookealo! 🎉",
+		"brandName": "Bookealo!",
+		"message": "Gracias por registrarte con nosotros.",
+		"verifyMessage": "Para comenzar, por favor verifica tu dirección de email haciendo clic en el botón de abajo.",
+		"button": "Verificar Mi Cuenta ✨",
+		"info": "💡 Si no solicitaste esta verificación, puedes ignorar este mensaje de forma segura."
+	},
+	"appointment_status": {
+		"subject": "El Estado de tu Cita Ha Cambiado",
+		"title": "Actualización de tu Cita 📅",
+		"greeting": "Hola {{name}},",
+		"service": "Servicio:",
+		"business": "Negocio:",
+		"date": "Fecha:",
+		"status": {
+			"CONFIRMED": "✅ Confirmada",
+			"CANCELLED": "❌ Cancelada",
+			"COMPLETED": "🎉 Completada",
+			"PENDING": "⏳ Pendiente",
+			"REJECTED": "🚫 Rechazada"
+		},
+		"button": "Ver Mis Citas"
+	},
+	"business_verification": {
+		"subject": "Verificación de Negocio",
+		"success": {
+			"title": "¡Tu Negocio Fue Verificado! 🎉",
+			"message": "¡Excelente noticia! Tu negocio {{businessName}} ha sido verificado exitosamente y ahora está activo en nuestra plataforma.",
+			"submessage": "Ya puedes comenzar a recibir citas y gestionar tu negocio desde tu panel de control.",
+			"button": "Ir al Panel de Control",
+			"info": "💡 Tu negocio ahora es visible para todos los usuarios de Bookealo. ¡Comienza a recibir citas!"
+		},
+		"failed": {
+			"title": "Verificación Fallida",
+			"message": "Lamentablemente, no pudimos verificar tu negocio {{businessName}}.",
+			"submessage": "Por favor, revisa la información enviada y vuelve a intentarlo. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.",
+			"button": "Actualizar Información",
+			"info": "💡 Asegúrate de que toda la información proporcionada sea correcta y esté actualizada."
+		}
+	},
+	"change_password": {
+		"subject": "Tu Contraseña Ha Sido Cambiada",
+		"title": "Contraseña Actualizada ✅",
+		"greeting": "Hola {{name}},",
+		"message": "Esta es una confirmación de que tu contraseña ha sido actualizada exitosamente.",
+		"submessage": "Tu cuenta ahora está protegida con tu nueva contraseña.",
+		"warning": "⚠️ Importante",
+		"warningMessage": "Si tú no realizaste este cambio, por favor contacta a nuestro equipo de soporte inmediatamente. Tu seguridad es nuestra prioridad.",
+		"info": "💡 Para mantener tu cuenta segura, te recomendamos usar una contraseña única y fuerte que no compartas con nadie.",
+		"button": "Ir a Mi Cuenta"
+	},
+	"email_status": {
+		"subject": "Tu Email Ha Sido Verificado",
+		"success": {
+			"title": "¡Tu Email Fue Verificado! 🎉",
+			"message": "Tu dirección de email ha sido verificada exitosamente y ahora está activa en nuestra plataforma.",
+			"submessage": "Ya puedes disfrutar de todas las funcionalidades de Bookealo con tu cuenta verificada.",
+			"info": "💡 Tu cuenta está completamente verificada y lista para usar. ¡Bienvenido a Bookealo!"
+		},
+		"failed": {
+			"title": "Verificación Fallida",
+			"message": "Lamentablemente, no pudimos verificar tu dirección de email.",
+			"submessage": "Por favor, revisa la información y vuelve a intentarlo. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.",
+			"info": "💡 Asegúrate de hacer clic en el enlace de verificación que enviamos a tu correo electrónico."
+		},
+		"button": "Ir a Mi Cuenta"
+	},
+	"membership_reminder": {
+		"subject": "Tu Membresía Próxima a Expirar ⏰",
+		"title": "Recordatorio de Membresía",
+		"greeting": "Hola {{name}},",
+		"message": "Te informamos que tu membresía está próxima a expirar.",
+		"expiryDateLabel": "Fecha de Expiración",
+		"membershipTypeLabel": "Tipo de Membresía",
+		"daysRemainingLabel": "{{days}} día(s) restante(s)",
+		"trialMessage": "Tu período de prueba gratuito está por finalizar. Para continuar disfrutando de todas las funcionalidades de Bookealo, te recomendamos renovar tu membresía.",
+		"paidMessage": "Tu membresía pagada está por vencer. Para evitar interrupciones en el servicio, te recomendamos renovar antes de la fecha de expiración.",
+		"actionMessage": "Haz clic en el botón de abajo para renovar tu membresía y continuar disfrutando de todos los beneficios.",
+		"button": "Renovar Mi Membresía",
+		"info": "💡 Si renuevas antes de la fecha de expiración, no perderás acceso a ninguna funcionalidad. Si tienes preguntas, nuestro equipo de soporte está disponible para ayudarte."
+	},
+	"payment_failed": {
+		"subject": "Pago de Membresía Fallido ❌",
+		"title": "Pago Fallido",
+		"greeting": "Hola {{name}},",
+		"message": "Lamentamos informarte que el pago de tu membresía no pudo ser procesado.",
+		"submessage": "Tu membresía ha sido desactivada temporalmente. Para reactivar tu cuenta y continuar disfrutando de todas las funcionalidades, por favor actualiza tu método de pago.",
+		"amountLabel": "Monto",
+		"invoiceLabel": "Factura",
+		"actionMessage": "Haz clic en el botón de abajo para actualizar tu método de pago y reactivar tu membresía.",
+		"button": "Actualizar Método de Pago",
+		"info": "💡 Si tienes problemas con tu método de pago, verifica que tu tarjeta esté activa y tenga fondos suficientes. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.",
+		"warning": "⚠️ Importante: Tu acceso a las funcionalidades premium ha sido suspendido hasta que se resuelva el pago."
+	},
+	"payment_succeeded": {
+		"subject": "Pago de Membresía Exitoso ✅",
+		"title": "¡Pago Confirmado!",
+		"greeting": "Hola {{name}},",
+		"message": "¡Excelente noticia! Tu pago de membresía ha sido procesado exitosamente.",
+		"submessage": "Tu membresía está activa y puedes continuar disfrutando de todas las funcionalidades de Bookealo.",
+		"amountLabel": "Monto Pagado",
+		"membershipTypeLabel": "Tipo de Membresía",
+		"expiryDateLabel": "Fecha de Expiración",
+		"button": "Ver Mi Membresía",
+		"info": "💡 Gracias por confiar en Bookealo. Tu membresía está activa y lista para usar."
+	},
+	"deposit_payment_confirmed": {
+		"subject": "Confirmación de Pago de Adelanto ✅",
+		"title": "¡Pago de Adelanto Confirmado!",
+		"greeting": "Hola {{name}},",
+		"message": "Tu pago de adelanto ha sido procesado exitosamente.",
+		"submessage": "Tu cita ha sido confirmada. Te esperamos en la fecha y hora acordadas.",
+		"amountLabel": "Monto del Adelanto",
+		"serviceNameLabel": "Servicio",
+		"businessNameLabel": "Negocio",
+		"appointmentDateLabel": "Fecha de la Cita",
+		"appointmentTimeLabel": "Hora",
+		"paymentReasonLabel": "Motivo del Pago",
+		"paymentReason": "Adelanto para confirmar tu reserva",
+		"button": "Ver Mi Cita",
+		"info": "💡 Este adelanto garantiza tu reserva. El resto del pago se realizará al momento del servicio."
+	},
+	"payment_reminder": {
+		"subject": "Recordatorio: Completa el Pago de tu Reserva ⏰",
+		"title": "Recordatorio de Pago Pendiente",
+		"greeting": "Hola {{name}},",
+		"message": "Tienes un pago de adelanto pendiente para tu reserva.",
+		"submessage": "Para confirmar tu cita, por favor completa el pago del adelanto. Tu reserva será cancelada automáticamente si no se completa el pago en las próximas horas.",
+		"amountLabel": "Monto del Adelanto",
+		"serviceNameLabel": "Servicio",
+		"businessNameLabel": "Negocio",
+		"appointmentDateLabel": "Fecha de la Cita",
+		"appointmentTimeLabel": "Hora",
+		"button": "Completar Pago Ahora",
+		"info": "⚠️ Importante: Si no completas el pago en las próximas horas, tu reserva será cancelada automáticamente y el horario quedará disponible para otros clientes."
+	},
+	"refund_confirmation": {
+		"subject": "Confirmación de Reembolso ✅",
+		"title": "Reembolso Procesado",
+		"greeting": "Hola {{name}},",
+		"message": "Tu reembolso ha sido procesado exitosamente.",
+		"submessage": "El monto reembolsado aparecerá en tu método de pago original en 5-10 días hábiles.",
+		"refundAmountLabel": "Monto Reembolsado",
+		"originalAmountLabel": "Monto Original del Adelanto",
+		"platformFeeLabel": "Comisión de la Plataforma",
+		"refundPercentageLabel": "Porcentaje Reembolsado",
+		"serviceNameLabel": "Servicio",
+		"businessNameLabel": "Negocio",
+		"appointmentDateLabel": "Fecha de la Cita Cancelada",
+		"appointmentTimeLabel": "Hora",
+		"refundIdLabel": "ID de Reembolso",
+		"info": "💡 El reembolso se procesará automáticamente a tu método de pago original. Si tienes preguntas, nuestro equipo de soporte está disponible para ayudarte.",
+		"feeInfo": "⚠️ Importante: La comisión de la plataforma no se reembolsa. Solo se reembolsa el monto que recibió el negocio.",
+		"button": "Ver Mis Citas"
+	},
+	"no_refund": {
+		"subject": "Cancelación de Cita - Sin Reembolso ⚠️",
+		"title": "Cancelación Sin Reembolso",
+		"greeting": "Hola {{name}},",
+		"message": "Tu cita ha sido cancelada exitosamente.",
+		"submessage": "Lamentablemente, según nuestra política de reembolsos, no es posible reembolsar el adelanto debido al tiempo de cancelación.",
+		"depositAmountLabel": "Monto del Adelanto",
+		"serviceNameLabel": "Servicio",
+		"businessNameLabel": "Negocio",
+		"appointmentDateLabel": "Fecha de la Cita Cancelada",
+		"appointmentTimeLabel": "Hora",
+		"hoursUntilLabel": "Tiempo hasta la Cita",
+		"policyInfo": "📋 Política de Reembolsos: Los reembolsos solo están disponibles si cancelas con más de 24 horas de anticipación. Al cancelar con menos tiempo, el adelanto no puede ser reembolsado.",
+		"button": "Ver Mis Citas"
+	},
+	"subscription_canceled": {
+		"subject": "Membresía Cancelada",
+		"title": "Membresía Cancelada",
+		"greeting": "Hola {{name}},",
+		"message": "Te informamos que tu membresía ha sido cancelada.",
+		"submessage": "{{#if cancelAtPeriodEnd}}Tu membresía seguirá activa hasta el final del período de facturación actual ({{expiryDate}}). Después de esa fecha, perderás acceso a las funcionalidades premium.{{else}}Tu acceso a las funcionalidades premium ha sido suspendido inmediatamente.{{/if}}",
+		"expiryDateLabel": "Fecha de Expiración",
+		"actionMessage": "Si cambias de opinión, puedes reactivar tu membresía en cualquier momento.",
+		"button": "Reactivar Membresía",
+		"info": "💡 Si tienes preguntas sobre la cancelación o deseas reactivar tu membresía, nuestro equipo de soporte está disponible para ayudarte."
+	},
+	"subscription_activated": {
+		"subject": "¡Membresía Activada! 🎉",
+		"title": "¡Bienvenido a Bookealo Premium!",
+		"greeting": "Hola {{name}},",
+		"message": "¡Felicidades! Tu membresía ha sido activada exitosamente.",
+		"submessage": "Ahora puedes disfrutar de todas las funcionalidades premium de Bookealo.",
+		"membershipTypeLabel": "Tipo de Membresía",
+		"expiryDateLabel": "Fecha de Expiración",
+		"button": "Ir al Dashboard",
+		"info": "💡 Gracias por confiar en Bookealo. Tu membresía está activa y lista para usar. ¡Comienza a gestionar tu negocio!"
+	},
+	"guest_booking_confirmation": {
+		"subject": "Tu Cita ha sido Confirmada 📅",
+		"title": "¡Cita Confirmada!",
+		"greeting": "Hola {{name}},",
+		"message": "Tu cita ha sido confirmada exitosamente. Te esperamos en la fecha y hora acordadas.",
+		"serviceNameLabel": "Servicio",
+		"businessNameLabel": "Negocio",
+		"appointmentDateLabel": "Fecha",
+		"appointmentTimeLabel": "Hora",
+		"appointmentAddressLabel": "Dirección",
+		"appointmentCodeLabel": "Código de Cita",
+		"qrCodeTitle": "Código QR para Check-In",
+		"qrInstructions": "Presenta este código QR al llegar o ingresa el código manualmente si el QR no funciona.",
+		"claimMessage": "¿Quieres crear tu cuenta en Bookealo para gestionar tus citas?",
+		"claimButton": "Crear Mi Cuenta",
+		"info": "💡 Puedes crear tu cuenta en cualquier momento usando el botón de arriba. Esto te permitirá ver y gestionar todas tus citas desde un solo lugar."
+	},
+	"common": {
+		"support": "Soporte",
+		"website": "Sitio Web",
+		"copyright": "© {{year}} Bookealo. Todos los derechos reservados.",
+		"owner": "Propietario:"
+	}
+}
+

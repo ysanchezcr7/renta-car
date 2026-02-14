@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang='{{lang}}'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<title>{{title}} - Bookealo</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 20px;
+				line-height: 1.6;
+			}
+			.email-wrapper {
+				max-width: 600px;
+				margin: 0 auto;
+				background: #ffffff;
+				border-radius: 20px;
+				overflow: hidden;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			}
+			.header {
+				background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+				padding: 50px 30px;
+				text-align: center;
+			}
+			.logo {
+				max-width: 140px;
+				height: auto;
+				margin-bottom: 20px;
+				filter: brightness(0) invert(1);
+			}
+			.content {
+				padding: 50px 40px;
+				text-align: center;
+			}
+			.icon-container {
+				width: 100px;
+				height: 100px;
+				margin: 0 auto 30px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 50px;
+				background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+			}
+			.title {
+				font-size: 32px;
+				font-weight: 800;
+				margin-bottom: 20px;
+				color: #1a202c;
+			}
+			.greeting {
+				font-size: 18px;
+				color: #2d3748;
+				margin-bottom: 30px;
+				font-weight: 500;
+			}
+			.membership-card {
+				background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+				border-radius: 16px;
+				padding: 25px;
+				margin: 30px 0;
+				border-left: 5px solid #718096;
+			}
+			.membership-info {
+				text-align: left;
+			}
+			.info-row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+				font-size: 16px;
+			}
+			.info-label {
+				color: #4a5568;
+				font-weight: 600;
+			}
+			.info-value {
+				color: #2d3748;
+				font-weight: 700;
+			}
+			.message {
+				font-size: 16px;
+				color: #2d3748;
+				margin: 30px 0;
+				line-height: 1.8;
+			}
+			.submessage {
+				font-size: 16px;
+				color: #2d3748;
+				margin: 15px 0;
+				line-height: 1.8;
+			}
+			.action-message {
+				font-size: 16px;
+				color: #2d3748;
+				margin: 15px 0;
+				line-height: 1.8;
+			}
+			.button-container {
+				margin: 35px 0;
+			}
+			.action-button {
+				display: inline-block;
+				padding: 16px 35px;
+				color: #ffffff !important;
+				text-decoration: none;
+				border-radius: 12px;
+				font-weight: 700;
+				font-size: 16px;
+				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			}
+			.info-box {
+				background: #edf2f7;
+				border-radius: 12px;
+				padding: 20px;
+				margin: 30px 0;
+				border-left: 4px solid #4299e1;
+			}
+			.info-text {
+				font-size: 14px;
+				color: #2d3748;
+				margin: 0;
+				text-align: left;
+			}
+			.footer {
+				background: #f7fafc;
+				padding: 30px 40px;
+				text-align: center;
+				border-top: 1px solid #e2e8f0;
+			}
+			.footer-links {
+				margin-bottom: 20px;
+			}
+			.footer-link {
+				color: #667eea;
+				text-decoration: none;
+				font-size: 14px;
+				margin: 0 10px;
+			}
+			.copyright {
+				font-size: 12px;
+				color: #a0aec0;
+				margin-top: 20px;
+			}
+			@media only screen and (max-width: 600px) {
+				.content {
+					padding: 30px 20px;
+				}
+				.title {
+					font-size: 26px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class='email-wrapper'>
+			<div class='header'>
+				<img class='logo' src='https://res.cloudinary.com/dux5ebiqb/image/upload/v1748394763/logo_bokealo.png' alt='Bookealo Logo' />
+			</div>
+			<div class='content'>
+				<div class='icon-container'>
+					🚫
+				</div>
+				<h1 class='title'>
+					{{title}}
+				</h1>
+				<p class='greeting'>{{greeting}}</p>
+				{{#if expiryDate}}
+				<div class='membership-card'>
+					<div class='membership-info'>
+						<div class='info-row'>
+							<span class='info-label'>{{expiryDateLabel}}:</span>
+							<span class='info-value'>{{expiryDate}}</span>
+						</div>
+					</div>
+				</div>
+				{{/if}}
+				<p class='message'>
+					{{message}}
+				</p>
+				{{#if cancelAtPeriodEnd}}
+					{{#if expiryDate}}
+					<p class='submessage'>
+						Your membership will remain active until the end of the current billing period ({{expiryDate}}). After that date, you will lose access to premium features.
+					</p>
+					{{/if}}
+				{{else}}
+					<p class='submessage'>
+						Your access to premium features has been suspended immediately.
+					</p>
+				{{/if}}
+				{{#if actionMessage}}
+				<p class='action-message'>
+					{{actionMessage}}
+				</p>
+				{{/if}}
+				<div class='button-container'>
+					<a href='{{dashboardLink}}' class='action-button'>{{button}}</a>
+				</div>
+				<div class='info-box'>
+					<p class='info-text'>
+						{{info}}
+					</p>
+				</div>
+			</div>
+			<div class='footer'>
+				<div class='footer-links'>
+					<a href='mailto:bookealoapp@gmail.com' class='footer-link'>{{support}}</a>
+					<span>|</span>
+					<a href='https://www.bookealoapp.com/' class='footer-link'>{{website}}</a>
+				</div>
+				<p class='copyright'>{{copyright}}</p>
+			</div>
+		</div>
+	</body>
+</html>
+

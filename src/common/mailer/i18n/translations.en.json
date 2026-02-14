@@ -1,0 +1,229 @@
+{
+	"otp": {
+		"subject": "Your verification code",
+		"greeting": "Hello! 👋",
+		"message": "You need a verification code to {{actionDescription}}.",
+		"useCode": "Use the following code:",
+		"codeLabel": "Your verification code",
+		"warning": "⚠️ This code is valid for 10 minutes. Do not share it with anyone.",
+		"info": "If you did not request this action, you can ignore this message or contact our support team."
+	},
+	"verify_email": {
+		"subject": "Your email verification link",
+		"title": "Welcome to Bookealo! 🎉",
+		"brandName": "Bookealo!",
+		"message": "Thank you for signing up with us.",
+		"verifyMessage": "To get started, please verify your email address by clicking the button below.",
+		"button": "Verify My Account ✨",
+		"info": "💡 If you did not request this verification, you can safely ignore this message."
+	},
+	"appointment_status": {
+		"subject": "Your Appointment Status Has Changed",
+		"title": "Appointment Update 📅",
+		"greeting": "Hello {{name}},",
+		"service": "Service:",
+		"business": "Business:",
+		"date": "Date:",
+		"status": {
+			"CONFIRMED": "✅ Confirmed",
+			"CANCELLED": "❌ Cancelled",
+			"COMPLETED": "🎉 Completed",
+			"PENDING": "⏳ Pending",
+			"REJECTED": "🚫 Rejected"
+		},
+		"button": "View My Appointments"
+	},
+	"business_verification": {
+		"subject": "Business Verification",
+		"success": {
+			"title": "Your Business Was Verified! 🎉",
+			"message": "Great news! Your business {{businessName}} has been successfully verified and is now active on our platform.",
+			"submessage": "You can now start receiving appointments and managing your business from your dashboard.",
+			"button": "Go to Dashboard",
+			"info": "💡 Your business is now visible to all Bookealo users. Start receiving appointments!"
+		},
+		"failed": {
+			"title": "Verification Failed",
+			"message": "Unfortunately, we couldn't verify your business {{businessName}}.",
+			"submessage": "Please review the submitted information and try again. If you need help, our support team is available to assist you.",
+			"button": "Update Information",
+			"info": "💡 Make sure all provided information is correct and up to date."
+		}
+	},
+	"change_password": {
+		"subject": "Your Password Has Changed",
+		"title": "Password Updated ✅",
+		"greeting": "Hello {{name}},",
+		"message": "This is a confirmation that your password has been successfully updated.",
+		"submessage": "Your account is now protected with your new password.",
+		"warning": "⚠️ Important",
+		"warningMessage": "If you did not make this change, please contact our support team immediately. Your security is our priority.",
+		"info": "💡 To keep your account secure, we recommend using a unique and strong password that you don't share with anyone.",
+		"button": "Go to My Account"
+	},
+	"email_status": {
+		"subject": "Your Email Has Been Verified",
+		"success": {
+			"title": "Your Email Was Verified! 🎉",
+			"message": "Your email address has been successfully verified and is now active on our platform.",
+			"submessage": "You can now enjoy all Bookealo features with your verified account.",
+			"info": "💡 Your account is fully verified and ready to use. Welcome to Bookealo!"
+		},
+		"failed": {
+			"title": "Verification Failed",
+			"message": "Unfortunately, we couldn't verify your email address.",
+			"submessage": "Please review the information and try again. If you need help, our support team is available to assist you.",
+			"info": "💡 Make sure to click on the verification link we sent to your email address."
+		},
+		"button": "Go to My Account"
+	},
+	"membership_reminder": {
+		"subject": "Your Membership Expiring Soon ⏰",
+		"title": "Membership Reminder",
+		"greeting": "Hello {{name}},",
+		"message": "We inform you that your membership is about to expire.",
+		"expiryDateLabel": "Expiry Date",
+		"membershipTypeLabel": "Membership Type",
+		"daysRemainingLabel": "{{days}} day(s) remaining",
+		"trialMessage": "Your free trial period is about to end. To continue enjoying all Bookealo features, we recommend renewing your membership.",
+		"paidMessage": "Your paid membership is about to expire. To avoid service interruptions, we recommend renewing before the expiration date.",
+		"actionMessage": "Click the button below to renew your membership and continue enjoying all the benefits.",
+		"button": "Renew My Membership",
+		"info": "💡 If you renew before the expiration date, you won't lose access to any features. If you have questions, our support team is available to help you."
+	},
+	"payment_failed": {
+		"subject": "Membership Payment Failed ❌",
+		"title": "Payment Failed",
+		"greeting": "Hello {{name}},",
+		"message": "We regret to inform you that your membership payment could not be processed.",
+		"submessage": "Your membership has been temporarily deactivated. To reactivate your account and continue enjoying all features, please update your payment method.",
+		"amountLabel": "Amount",
+		"invoiceLabel": "Invoice",
+		"actionMessage": "Click the button below to update your payment method and reactivate your membership.",
+		"button": "Update Payment Method",
+		"info": "💡 If you're having issues with your payment method, verify that your card is active and has sufficient funds. If you need help, our support team is available to assist you.",
+		"warning": "⚠️ Important: Your access to premium features has been suspended until the payment issue is resolved."
+	},
+	"payment_succeeded": {
+		"subject": "Membership Payment Successful ✅",
+		"title": "Payment Confirmed!",
+		"greeting": "Hello {{name}},",
+		"message": "Great news! Your membership payment has been processed successfully.",
+		"submessage": "Your membership is active and you can continue enjoying all Bookealo features.",
+		"amountLabel": "Amount Paid",
+		"membershipTypeLabel": "Membership Type",
+		"expiryDateLabel": "Expiry Date",
+		"button": "View My Membership",
+		"info": "💡 Thank you for trusting Bookealo. Your membership is active and ready to use."
+	},
+	"deposit_payment_confirmed": {
+		"subject": "Deposit Payment Confirmation ✅",
+		"title": "Deposit Payment Confirmed!",
+		"greeting": "Hello {{name}},",
+		"message": "Your deposit payment has been processed successfully.",
+		"submessage": "Your appointment has been confirmed. We look forward to seeing you at the scheduled date and time.",
+		"amountLabel": "Deposit Amount",
+		"serviceNameLabel": "Service",
+		"businessNameLabel": "Business",
+		"appointmentDateLabel": "Appointment Date",
+		"appointmentTimeLabel": "Time",
+		"paymentReasonLabel": "Payment Reason",
+		"paymentReason": "Deposit to confirm your reservation",
+		"button": "View My Appointment",
+		"info": "💡 This deposit secures your reservation. The remaining payment will be made at the time of service."
+	},
+	"payment_reminder": {
+		"subject": "Reminder: Complete Your Reservation Payment ⏰",
+		"title": "Payment Reminder",
+		"greeting": "Hello {{name}},",
+		"message": "You have a pending deposit payment for your reservation.",
+		"submessage": "To confirm your appointment, please complete the deposit payment. Your reservation will be automatically cancelled if payment is not completed within the next few hours.",
+		"amountLabel": "Deposit Amount",
+		"serviceNameLabel": "Service",
+		"businessNameLabel": "Business",
+		"appointmentDateLabel": "Appointment Date",
+		"appointmentTimeLabel": "Time",
+		"button": "Complete Payment Now",
+		"info": "⚠️ Important: If you do not complete the payment within the next few hours, your reservation will be automatically cancelled and the time slot will become available for other customers."
+	},
+	"refund_confirmation": {
+		"subject": "Refund Confirmation ✅",
+		"title": "Refund Processed",
+		"greeting": "Hello {{name}},",
+		"message": "Your refund has been processed successfully.",
+		"submessage": "The refunded amount will appear in your original payment method within 5-10 business days.",
+		"refundAmountLabel": "Refunded Amount",
+		"originalAmountLabel": "Original Deposit Amount",
+		"platformFeeLabel": "Platform Fee",
+		"refundPercentageLabel": "Refund Percentage",
+		"serviceNameLabel": "Service",
+		"businessNameLabel": "Business",
+		"appointmentDateLabel": "Cancelled Appointment Date",
+		"appointmentTimeLabel": "Time",
+		"refundIdLabel": "Refund ID",
+		"info": "💡 The refund will be automatically processed to your original payment method. If you have questions, our support team is available to help you.",
+		"feeInfo": "⚠️ Important: The platform fee is not refunded. Only the amount received by the business is refunded.",
+		"button": "View My Appointments"
+	},
+	"no_refund": {
+		"subject": "Appointment Cancellation - No Refund ⚠️",
+		"title": "Cancellation Without Refund",
+		"greeting": "Hello {{name}},",
+		"message": "Your appointment has been successfully cancelled.",
+		"submessage": "Unfortunately, according to our refund policy, it is not possible to refund the deposit due to the cancellation timing.",
+		"depositAmountLabel": "Deposit Amount",
+		"serviceNameLabel": "Service",
+		"businessNameLabel": "Business",
+		"appointmentDateLabel": "Cancelled Appointment Date",
+		"appointmentTimeLabel": "Time",
+		"hoursUntilLabel": "Time Until Appointment",
+		"policyInfo": "📋 Refund Policy: Refunds are only available if you cancel more than 24 hours in advance. When cancelling with less notice, the deposit cannot be refunded.",
+		"button": "View My Appointments"
+	},
+	"subscription_canceled": {
+		"subject": "Membership Canceled",
+		"title": "Membership Canceled",
+		"greeting": "Hello {{name}},",
+		"message": "We inform you that your membership has been canceled.",
+		"submessage": "{{#if cancelAtPeriodEnd}}Your membership will remain active until the end of the current billing period ({{expiryDate}}). After that date, you will lose access to premium features.{{else}}Your access to premium features has been suspended immediately.{{/if}}",
+		"expiryDateLabel": "Expiry Date",
+		"actionMessage": "If you change your mind, you can reactivate your membership at any time.",
+		"button": "Reactivate Membership",
+		"info": "💡 If you have questions about the cancellation or wish to reactivate your membership, our support team is available to help you."
+	},
+	"subscription_activated": {
+		"subject": "Membership Activated! 🎉",
+		"title": "Welcome to Bookealo Premium!",
+		"greeting": "Hello {{name}},",
+		"message": "Congratulations! Your membership has been successfully activated.",
+		"submessage": "You can now enjoy all premium features of Bookealo.",
+		"membershipTypeLabel": "Membership Type",
+		"expiryDateLabel": "Expiry Date",
+		"button": "Go to Dashboard",
+		"info": "💡 Thank you for trusting Bookealo. Your membership is active and ready to use. Start managing your business!"
+	},
+	"guest_booking_confirmation": {
+		"subject": "Your Appointment Has Been Confirmed 📅",
+		"title": "Appointment Confirmed!",
+		"greeting": "Hello {{name}},",
+		"message": "Your appointment has been successfully confirmed. We look forward to seeing you at the scheduled date and time.",
+		"serviceNameLabel": "Service",
+		"businessNameLabel": "Business",
+		"appointmentDateLabel": "Date",
+		"appointmentTimeLabel": "Time",
+		"appointmentAddressLabel": "Address",
+		"appointmentCodeLabel": "Appointment Code",
+		"qrCodeTitle": "QR Code for Check-In",
+		"qrInstructions": "Present this QR code upon arrival or enter the code manually if the QR doesn't work.",
+		"claimMessage": "Would you like to create your Bookealo account to manage your appointments?",
+		"claimButton": "Create My Account",
+		"info": "💡 You can create your account at any time using the button above. This will allow you to view and manage all your appointments from one place."
+	},
+	"common": {
+		"support": "Support",
+		"website": "Website",
+		"copyright": "© {{year}} Bookealo. All rights reserved.",
+		"owner": "Owner:"
+	}
+}
+

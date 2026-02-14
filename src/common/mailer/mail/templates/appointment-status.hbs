@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang='es'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<title>Estado de tu Cita - Bookealo</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 20px;
+				line-height: 1.6;
+			}
+			.email-wrapper {
+				max-width: 600px;
+				margin: 0 auto;
+				background: #ffffff;
+				border-radius: 20px;
+				overflow: hidden;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			}
+			.header {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				padding: 40px 30px;
+				text-align: center;
+			}
+			.logo {
+				max-width: 140px;
+				height: auto;
+				margin-bottom: 15px;
+				filter: brightness(0) invert(1);
+			}
+			.content {
+				padding: 50px 40px;
+			}
+			.title {
+				font-size: 28px;
+				font-weight: 800;
+				color: #1a202c;
+				margin-bottom: 30px;
+				text-align: center;
+			}
+			.greeting {
+				font-size: 18px;
+				color: #2d3748;
+				margin-bottom: 30px;
+				text-align: center;
+				font-weight: 500;
+			}
+			.appointment-card {
+				background: #ffffff;
+				border-radius: 16px;
+				padding: 30px;
+				margin: 30px 0;
+				border: 1px solid #e2e8f0;
+				border-left: 5px solid #667eea;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.appointment-detail {
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+			}
+			.detail-icon {
+				font-size: 20px;
+				margin-right: 12px;
+				width: 30px;
+				text-align: center;
+			}
+			.detail-label {
+				font-size: 13px;
+				color: #4a5568;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				font-weight: 600;
+				min-width: 100px;
+			}
+			.detail-value {
+				font-size: 16px;
+				color: #2d3748;
+				font-weight: 600;
+				flex: 1;
+			}
+			.status-badge {
+				display: inline-block;
+				padding: 12px 24px;
+				border-radius: 50px;
+				font-weight: 700;
+				font-size: 16px;
+				margin: 20px 0;
+				text-align: center;
+				width: 100%;
+			}
+			.status-confirmed {
+				background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+				color: #ffffff;
+			}
+			.status-canceled {
+				background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+				color: #ffffff;
+			}
+			.status-completed {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #ffffff;
+			}
+			.status-pending {
+				background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+				color: #ffffff;
+			}
+			.status-rejected {
+				background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+				color: #ffffff;
+			}
+			.button-container {
+				text-align: center;
+				margin: 35px 0;
+			}
+			.view-button {
+				display: inline-block;
+				padding: 16px 35px;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #ffffff !important;
+				text-decoration: none;
+				border-radius: 12px;
+				font-weight: 700;
+				font-size: 16px;
+				box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+			}
+			.footer {
+				background: #f7fafc;
+				padding: 30px 40px;
+				text-align: center;
+				border-top: 1px solid #e2e8f0;
+			}
+			.footer-links {
+				margin-bottom: 20px;
+			}
+			.footer-link {
+				color: #667eea;
+				text-decoration: none;
+				font-size: 14px;
+				margin: 0 10px;
+			}
+			.copyright {
+				font-size: 12px;
+				color: #a0aec0;
+				margin-top: 20px;
+			}
+			@media only screen and (max-width: 600px) {
+				.content {
+					padding: 30px 20px;
+				}
+				.title {
+					font-size: 24px;
+				}
+				.appointment-card {
+					padding: 20px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class='email-wrapper'>
+			<div class='header'>
+				<img class='logo' src='https://res.cloudinary.com/dux5ebiqb/image/upload/v1748394763/logo_bokealo.png' alt='Bookealo Logo' />
+			</div>
+			<div class='content'>
+				<h1 class='title'>{{title}}</h1>
+				<p class='greeting'>{{greeting}}</p>
+				<div class='appointment-card'>
+					<div class='appointment-detail'>
+						<span class='detail-icon'>💼</span>
+						<span class='detail-label'>{{serviceLabel}}</span>
+						<span class='detail-value'>{{serviceName}}</span>
+					</div>
+					<div class='appointment-detail'>
+						<span class='detail-icon'>🏢</span>
+						<span class='detail-label'>{{businessLabel}}</span>
+						<span class='detail-value'>{{businessName}}</span>
+					</div>
+					<div class='appointment-detail'>
+						<span class='detail-icon'>📆</span>
+						<span class='detail-label'>{{dateLabel}}</span>
+						<span class='detail-value'>{{formattedDate}}</span>
+					</div>
+				</div>
+				{{#if (eq status "CONFIRMED")}}
+				<div class='status-badge status-confirmed'>
+					{{statusText}}
+				</div>
+				{{else if (eq status "CANCELLED")}}
+				<div class='status-badge status-canceled'>
+					{{statusText}}
+				</div>
+				{{else if (eq status "COMPLETED")}}
+				<div class='status-badge status-completed'>
+					{{statusText}}
+				</div>
+				{{else if (eq status "PENDING")}}
+				<div class='status-badge status-pending'>
+					{{statusText}}
+				</div>
+				{{else if (eq status "REJECTED")}}
+				<div class='status-badge status-rejected'>
+					{{statusText}}
+				</div>
+				{{else}}
+				<div class='status-badge status-pending'>
+					🔔 {{statusText}}
+				</div>
+				{{/if}}
+				{{#if dashboardLink}}
+				<div class='button-container'>
+					<a href='{{dashboardLink}}' class='view-button'>{{button}}</a>
+				</div>
+				{{/if}}
+			</div>
+			<div class='footer'>
+				<div class='footer-links'>
+					<a href='mailto:bookealoapp@gmail.com' class='footer-link'>{{support}}</a>
+					<span>|</span>
+					<a href='https://www.bookealoapp.com/' class='footer-link'>{{website}}</a>
+				</div>
+				<p class='copyright'>{{copyright}}</p>
+			</div>
+		</div>
+	</body>
+</html>
