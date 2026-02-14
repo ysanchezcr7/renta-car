@@ -1,4 +1,4 @@
-# Template – NestJS, Auth JWT, Users y Prisma
+# Template-Nestjs
 
 Proyecto base con **autenticación JWT**, módulos **Auth** y **Users**, y **Prisma** (PostgreSQL) como ORM. Pensado para clonar y usar como plantilla en nuevos proyectos.
 
@@ -67,16 +67,9 @@ prisma/
 3. **Subida de archivos**: Añadir módulo de upload (ej. Multer) y usarlo en registro/actualización de perfil.
 4. **Pagos / negocio**: Añadir módulos (Stripe, negocio, etc.) e importarlos en `AuthModule`/`UsersModule` según necesites.
 
-## Subir a GitHub
+## Repositorio
 
-```bash
-git init
-git add .
-git commit -m "chore: initial template - NestJS Auth Users Prisma"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/template.git
-git push -u origin main
-```
+https://github.com/ysanchezcr7/Template-Nestjs
 
 Asegúrate de no subir `.env` (ya está en `.gitignore`). Usa `.env.example` como referencia.
 
