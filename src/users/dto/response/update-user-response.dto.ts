@@ -6,20 +6,20 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SingleResponseDto } from 'src/common/dto/response';
 
 export class UpdateUserResponseDto extends SingleResponseDto<UserResponseDto> {
-	@ApiProperty()
-	@ValidateNested()
-	@Type(() => UserResponseDto)
-	declare data: UserResponseDto;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UserResponseDto)
+  declare data: UserResponseDto;
 }
 
 export class ProfileUserResponseDto extends SingleResponseDto<UserResponseDto> {
-	@ApiProperty()
-	@ValidateNested()
-	@Type(() => UserResponseDto)
-	declare data: UserResponseDto;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UserResponseDto)
+  declare data: UserResponseDto;
 
-	@ApiProperty()
-	@ValidateNested()
-	@Type(() => OwnerMembershipResponseDto)
-	membership?: OwnerMembershipResponseDto;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => OwnerMembershipResponseDto)
+  membership?: OwnerMembershipResponseDto;
 }

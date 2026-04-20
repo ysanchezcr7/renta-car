@@ -6,29 +6,28 @@ import { ApiProperty } from '@nestjs/swagger';
  * Usa genéricos para tipar el campo data
  */
 export class BaseResponseWrapperDto<T> {
-	@ApiProperty({ example: 'Operation completed successfully.' })
-	message: string;
+  @ApiProperty({ example: 'Operation completed successfully.' })
+  message: string;
 
-	@ApiProperty({ example: true })
-	success: boolean;
+  @ApiProperty({ example: true })
+  success: boolean;
 
-	@ApiProperty()
-	data?: T;
+  @ApiProperty()
+  data?: T;
 }
 
 /**
  * Wrapper para respuestas con lista de datos
  */
 export class ListResponseDto<T> extends BaseResponseWrapperDto<T[]> {
-	@ApiProperty()
-	declare data: T[];
+  @ApiProperty()
+  declare data: T[];
 }
 
 /**
  * Wrapper para respuestas con un solo objeto
  */
 export class SingleResponseDto<T> extends BaseResponseWrapperDto<T> {
-	@ApiProperty()
-	declare data: T;
+  @ApiProperty()
+  declare data: T;
 }
-

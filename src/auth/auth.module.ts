@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AgenciesModule } from 'src/agencies/agencies.module';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstant } from './Constant/jwt.constants';
@@ -16,6 +17,7 @@ import { UserRepository } from 'src/users/repository/user-repository/user-reposi
     PrismaModule,
     MailModule,
     UsersModule,
+    AgenciesModule,
     JwtModule.register({
       global: true,
       secret: jwtConstant.secret,

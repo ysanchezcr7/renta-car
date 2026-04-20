@@ -14,5 +14,5 @@ import { OwnerMembershipGuard } from '../guard/owner-membership.guard';
  * ```
  */
 export function RequireMembership() {
-	return applyDecorators(UseGuards(OwnerMembershipGuard));
+  return applyDecorators(UseGuards(OwnerMembershipGuard));
 }

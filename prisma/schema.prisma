@@ -1,6 +1,3 @@
-// Template base: Auth + Users con JWT y Prisma
-// Añade aquí tus modelos según el proyecto (Business, Booking, etc.)
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,30 +6,239 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Roles {
+// Backend: Sistema de intermediación (Agencias ↔ Vendors) para renta de autos.
+// Principios:
+// - Multi-agencia: toda data operativa tiene agencyId.
+// - Las agencias NO deben ver el vendor real (regla a nivel API/servicios).
+// - Pricing en 2 capas: venta (sale) vs costo vendor (cost).
+// - Snapshot CRÍTICO en quote/reservation (no recalcular histórico).
+
+enum Role {
+  SUPER_ADMIN
+  AGENCY
   CUSTOMER
-  OWNER
-  SUPERADMIN
 }
 
-model User {
-  user_id                   Int       @id @default(autoincrement())
-  email                     String    @unique
-  password                  String
-  name                      String
-  lastName                  String
-  middleName                String?
-  phone                     String?
-  image                     String?
-  role                      Roles     @default(CUSTOMER)
-  deviceToken               String?
-  referralBusinessId        Int?
+/// Alta de agencia: revisión anti-fraude por SUPER_ADMIN antes de permitir login.
+enum AgencyApprovalStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum CommissionType {
+  PERCENTAGE
+  FIXED
+}
+
+enum QuoteStatus {
+  QUOTE_REQUESTED
+  MANUAL_REVIEW
+  QUOTE_SENT
+
+  PENDING_VENDOR_AVAILABILITY
+  AVAILABILITY_APPROVED
+
+  AGENCY_ACCEPTED
+  AWAITING_PAYMENT
+  PAYMENT_RECEIVED
+
+  REQUEST_SUBMITTED_TO_VENDOR
+  PROCESSING_VOUCHER
+  VOUCHER_RECEIVED
+  VOUCHER_SENT
+
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  RECEIVED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentKind {
+  CLIENT
+  VENDOR
+}
+
+enum ReservationStatus {
+  CREATED
+  SUBMITTED_TO_VENDOR
+  CONFIRMED
+  CANCELLED
+}
+
+enum ReservationPaymentSnapshotStatus {
+  CLIENT_CONFIRMED
+}
+
+enum VoucherSnapshotStatus {
+  NOT_ISSUED
+  PENDING
+  RECEIVED
+  SENT
+}
+
+enum RateTypeKind {
+  FIXED_SEASON
+  RTOP
+  DISP_CC
+  PROMO
+  SPECIAL_DATE_RANGE
+}
+
+enum RateLayer {
+  SALE
+  VENDOR_COST
+}
+
+enum TransmissionType {
+  MANUAL
+  AUTOMATIC
+}
+
+enum DriverLicenseKind {
+  REX
+  OTHER
+}
+
+enum EmailEventType {
+  QUOTE_SENT
+  AVAILABILITY_APPROVED
+  AVAILABILITY_EXPIRED
+  PAYMENT_PENDING
+  PAYMENT_RECEIVED
+  VOUCHER_READY
+  VOUCHER_VENDOR_REGISTERED
+  VOUCHER_INTERNAL_READY
+  VOUCHER_SENT_TO_AGENCY
+}
+
+enum VoucherRecordStatus {
+  PENDING
+  VENDOR_UPLOADED
+  INTERNAL_READY
+  SENT
+}
+
+enum DocumentKind {
+  VENDOR_VOUCHER
+  INTERNAL_VOUCHER
+  OTHER
+}
+
+/// Modalidad contractual de la oferta de tarifas frente al vendor.
+/// - AVAILABILITY: "Disponibilidad" (aplica en todas las provincias donde el vendor tiene oficinas).
+/// - RISK: "Riesgo" (solo en provincias acotadas; se modela con VendorRateGroupProvince).
+/// - OFFICIAL: Tarifa oficial; usada también como reemplazo en VendorRateOverride.
+enum RentalModality {
+  AVAILABILITY
+  RISK
+  OFFICIAL
+}
+
+model Agency {
+  id        Int      @id @default(autoincrement())
+  /// Nombre corto / legado; se sincroniza con `tradeName` en altas nuevas
+  name      String
+  /// Nombre legal (razón social)
+  legalName String?
+  /// Nombre comercial
+  tradeName String?
+  /// URL del logo (tras subida a almacenamiento)
+  logoUrl   String?
+
+  /// Solicitud “Aplicar como agencia”: responsable
+  responsibleFullName String?
+  /// Correo de contacto de la agencia (puede diferir del usuario operador)
+  contactEmail        String?
+  phone               String?
+
+  /// Dirección
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  stateRegion  String?
+  stateCode    String?
+  country      String?
+  postalCode   String?
+
+  /// Facturación / cumplimiento
+  billingAddress            String?
+  sellerOfTravelDocumentUrl String?
+  taxIdType                 String?
+  taxId                     String?
+
+  isAdmin   Boolean  @default(false) // Agencia interna del dueño del sistema
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Registros web existentes / creadas por admin: aprobadas por defecto.
+  approvalStatus AgencyApprovalStatus @default(APPROVED)
+  rejectionReason  String?
+
+  /// Cuenta de acceso (operador = la propia agencia; no fila User AGENCY)
+  password                  String?
   isVerified                Boolean   @default(false)
   verificationToken         String?
   verificationTokenExpiry   DateTime?
-  deletedAt                 DateTime?
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
+  deviceToken               String?
+
+  users   User[]
+  clients Client[]
+
+  quotes        Quote[]
+  payments      Payment[]
+  reservations  Reservation[]
+  statusHistory StatusHistory[]
+  emailLogs     EmailLog[]
+  agencyPricingRules AgencyPricingRule[]
+  agencyCategoryPriceMasks AgencyCategoryPriceMask[]
+  documents     Document[]
+
+  commissionProfile AgencyCommissionProfile?
+
+  @@index([isAdmin])
+  @@index([tradeName])
+  @@index([contactEmail])
+  @@unique([contactEmail])
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  agencyId Int?
+  agency   Agency? @relation(fields: [agencyId], references: [id])
+
+  email      String  @unique
+  password   String
+  firstName  String
+  lastName   String
+  middleName String?
+  phone      String?
+  image      String?
+
+  role                    Role      @default(AGENCY)
+  isVerified              Boolean   @default(false)
+  verificationToken       String?
+  verificationTokenExpiry DateTime?
+
+  deviceToken String?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  createdQuotes         Quote[]                @relation("QuoteCreatedBy")
+  quoteVendorSelections QuoteVendorSelection[] @relation("QuoteVendorSelectionSelectedBy")
+  verifiedPayments      Payment[]              @relation("PaymentVerifiedBy")
+  statusHistory         StatusHistory[]        @relation("StatusHistoryCreatedBy")
+  statusHistoryAdminApproved StatusHistory[] @relation("StatusHistoryAdminApproved")
+
+  @@index([agencyId])
+  @@index([role])
 }
 
 model Otp {
@@ -41,4 +247,800 @@ model Otp {
   token     String
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model Client {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  notes     String?
+
+  dateOfBirth     DateTime?
+  licenseKind     DriverLicenseKind?
+  licenseIssuedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quotes Quote[]
+
+  @@index([agencyId])
+}
+
+// --- Vendors / Catálogo ---
+
+model Vendor {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendorRentadoras      VendorRentadora[]
+  vendorRates           VendorRate[]
+  vendorRateGroups      VendorRateGroup[]
+  quotes                Quote[]               @relation("QuoteSelectedVendor")
+  availabilityQuotes    Quote[]               @relation("QuoteAvailabilityVendor")
+  quoteVendorSelections QuoteVendorSelection[]
+  reservations          Reservation[]
+}
+
+model Rentadora {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendorRentadoras VendorRentadora[]
+  categories       Category[]
+  vendorRates           VendorRate[]
+  quotes                Quote[]               @relation("QuoteRentadora")
+  availabilityQuotes    Quote[]               @relation("QuoteAvailabilityRentadora")
+  quoteVendorSelections QuoteVendorSelection[]
+  reservations          Reservation[]         @relation("ReservationRentadora")
+}
+
+model VendorRentadora {
+  id          Int      @id @default(autoincrement())
+  vendorId    Int
+  rentadoraId Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+  rentadora Rentadora @relation(fields: [rentadoraId], references: [id])
+
+  @@unique([vendorId, rentadoraId])
+  @@index([vendorId])
+  @@index([rentadoraId])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  rentadoraId Int
+  rentadora   Rentadora @relation(fields: [rentadoraId], references: [id])
+
+  code      String
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  carModels   CarModel[]
+  vendorRates VendorRate[]
+  quotes      Quote[]
+  reservations Reservation[] @relation("ReservationCategory")
+  agencyPriceMasks AgencyCategoryPriceMask[]
+
+  @@unique([rentadoraId, code])
+  @@index([rentadoraId])
+}
+
+model CarModel {
+  id         Int      @id @default(autoincrement())
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  code         String
+  name         String
+  transmission TransmissionType
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  vendorRates VendorRate[]
+  quotes      Quote[]
+  reservations Reservation[] @relation("ReservationCarModel")
+
+  @@unique([categoryId, code])
+  @@index([categoryId])
+}
+
+// --- Pricing ---
+
+model Season {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendorRates      VendorRate[]
+  vendorRateGroups VendorRateGroup[]
+  quotes           Quote[]
+}
+
+model RateType {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  name        String
+  kind        RateTypeKind
+  layer       RateLayer
+  isActive    Boolean      @default(true)
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  vendorRates             VendorRate[]
+  quoteSaleRates          Quote[]                @relation("QuoteSaleRateType")
+  quoteVendorPaymentRates Quote[]                @relation("QuoteVendorPaymentRateType")
+  quoteVendorSelections   QuoteVendorSelection[] @relation("QuoteVendorSelectionPaymentRate")
+  reservationSaleRates    Reservation[]          @relation("ReservationSaleRateType")
+  reservationVendorPayRates Reservation[]        @relation("ReservationVendorPaymentRate")
+
+  @@index([kind, layer])
+}
+
+model VendorRate {
+  id Int @id @default(autoincrement())
+
+  /// Pertenencia a una oferta (VendorRateGroup). Opcional por compatibilidad con datos previos.
+  rateGroupId Int?
+  rateGroup   VendorRateGroup? @relation(fields: [rateGroupId], references: [id], onDelete: Cascade)
+
+  vendorId     Int
+  rentadoraId  Int
+  categoryId   Int?
+  carModelId   Int?
+  transmission TransmissionType?
+
+  seasonId   Int?
+  rateTypeId Int
+
+  // Reglas de validez/selección
+  minDays   Int?
+  maxDays   Int?
+  validFrom DateTime?
+  validTo   DateTime?
+
+  // Precio
+  dailyPrice       Decimal  @db.Decimal(12, 2)
+  /// Precio por día extra más allá del tramo contratado (p.ej. "DIA EXTRA" del PDF).
+  extraDayPrice    Decimal? @db.Decimal(12, 2)
+  /// Cargo fijo de gasolina/tanque (una sola vez por renta).
+  fuelFee          Decimal? @db.Decimal(12, 2)
+  /// Depósito de garantía reembolsable (informativo/retenido, no se cobra como ingreso).
+  securityDeposit  Decimal? @db.Decimal(12, 2)
+  currency   String  @default("USD")
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+  rentadora Rentadora @relation(fields: [rentadoraId], references: [id])
+  category  Category? @relation(fields: [categoryId], references: [id])
+  carModel  CarModel? @relation(fields: [carModelId], references: [id])
+  season    Season?   @relation(fields: [seasonId], references: [id])
+  rateType  RateType  @relation(fields: [rateTypeId], references: [id])
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  insurances VendorRateInsurance[]
+
+  @@index([vendorId, rentadoraId])
+  @@index([rateTypeId])
+  @@index([seasonId])
+  @@index([validFrom, validTo])
+  @@index([minDays, maxDays])
+  @@index([locationId])
+  @@index([rateGroupId])
+
+  quoteVendorSelections QuoteVendorSelection[]
+}
+
+/// Catálogo reutilizable de tiers de edad para el seguro/relevo de responsabilidad.
+/// Ejemplos: "25-75" (estándar), "21-24 y 76-79.99" (extendido).
+model AgeTier {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  ageMin    Int
+  ageMax    Int
+  notes     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  insuranceRates VendorRateInsurance[]
+
+  @@index([ageMin, ageMax])
+}
+
+/// Oferta/PDF de tarifas cargada por el SUPER_ADMIN. Contenedor que agrupa filas (VendorRate).
+/// Hereda a sus filas: vendor, modalidad, temporada, vigencia y cobertura de provincias.
+model VendorRateGroup {
+  id       Int    @id @default(autoincrement())
+  vendorId Int
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  name     String
+  modality RentalModality
+  seasonId Int?
+  season   Season? @relation(fields: [seasonId], references: [id])
+
+  validFrom DateTime
+  validTo   DateTime
+
+  /// Moneda por defecto para toda la oferta (las filas pueden sobrescribir).
+  currency  String  @default("USD")
+
+  isActive  Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  provinces       VendorRateGroupProvince[]
+  rates           VendorRate[]
+  overridesFrom   VendorRateOverride[]      @relation("OverrideSource")
+  overridesAsRepl VendorRateOverride[]      @relation("OverrideReplacement")
+
+  @@index([vendorId])
+  @@index([modality])
+  @@index([seasonId])
+  @@index([validFrom, validTo])
+}
+
+/// Cobertura por provincia/ubicación de una oferta.
+/// Si no hay filas para un VendorRateGroup => aplica a TODAS las provincias (DISPONIBILIDAD típica).
+model VendorRateGroupProvince {
+  id          Int @id @default(autoincrement())
+  rateGroupId Int
+  rateGroup   VendorRateGroup @relation(fields: [rateGroupId], references: [id], onDelete: Cascade)
+
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([rateGroupId, locationId])
+  @@index([locationId])
+}
+
+/// Sub-rango de fechas que, dentro de la vigencia de la oferta fuente,
+/// reemplaza sus tarifas por las de otra oferta (típicamente la OFICIAL).
+/// Regla PDF: "DEL 15/12/2024 HASTA EL 31/12/2024 SEGÚN TARIFA OFICIAL".
+model VendorRateOverride {
+  id          Int @id @default(autoincrement())
+  rateGroupId Int
+  rateGroup   VendorRateGroup @relation("OverrideSource", fields: [rateGroupId], references: [id], onDelete: Cascade)
+
+  replacementGroupId Int
+  replacementGroup   VendorRateGroup @relation("OverrideReplacement", fields: [replacementGroupId], references: [id])
+
+  overrideFrom DateTime
+  overrideTo   DateTime
+  notes        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rateGroupId, overrideFrom, overrideTo])
+  @@index([replacementGroupId])
+}
+
+/// Seguro/relevo de responsabilidad por tier de edad, asociado a una fila de tarifa.
+/// Permite tener precios de seguro diferenciados (ej. 25-75 vs 21-24/76-79.99).
+model VendorRateInsurance {
+  id           Int @id @default(autoincrement())
+  vendorRateId Int
+  vendorRate   VendorRate @relation(fields: [vendorRateId], references: [id], onDelete: Cascade)
+
+  ageTierId Int
+  ageTier   AgeTier @relation(fields: [ageTierId], references: [id])
+
+  dailyPrice Decimal @db.Decimal(12, 2)
+  currency   String  @default("USD")
+  isActive   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([vendorRateId, ageTierId])
+  @@index([vendorRateId])
+  @@index([ageTierId])
+}
+
+// --- Comisiones ---
+
+model AgencyCommissionProfile {
+  id       Int    @id @default(autoincrement())
+  agencyId Int    @unique
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  type      CommissionType
+  value     Decimal        @db.Decimal(12, 4)
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model GlobalCommissionProfile {
+  id        Int            @id @default(autoincrement())
+  type      CommissionType
+  value     Decimal        @db.Decimal(12, 4)
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model AgencyPricingRule {
+  id        Int      @id @default(autoincrement())
+  agencyId  Int
+  agency    Agency   @relation(fields: [agencyId], references: [id])
+  key       String
+  value     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([key])
+}
+
+/// Máscaras de precio por categoría de producto (margen agencia).
+model AgencyCategoryPriceMask {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  percentageEnabled Boolean  @default(false)
+  percentageValue   Decimal  @default(0) @db.Decimal(8, 4)
+
+  fixedTotalEnabled Boolean  @default(false)
+  fixedTotalValue   Decimal  @default(0) @db.Decimal(12, 2)
+
+  fixedPerDayEnabled Boolean  @default(false)
+  fixedPerDayValue   Decimal  @default(0) @db.Decimal(12, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([agencyId, categoryId])
+  @@index([agencyId])
+  @@index([categoryId])
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  province  String?
+  isAirport Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendorRates       VendorRate[]
+  vendorRateGroups  VendorRateGroupProvince[]
+  quotesPickup      Quote[]                   @relation("QuotePickupLocation")
+}
+
+model BusinessRule {
+  id          Int      @id @default(autoincrement())
+  ruleKey     String   @unique
+  ruleValue   String
+  type        String
+  isActive    Boolean  @default(true)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- Operación ---
+
+model Quote {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  clientId Int?
+  client   Client? @relation(fields: [clientId], references: [id])
+
+  createdByUserId Int?
+  createdBy       User? @relation("QuoteCreatedBy", fields: [createdByUserId], references: [id])
+
+  status QuoteStatus @default(QUOTE_REQUESTED)
+
+  // Request base
+  pickupLocation  String
+  dropoffLocation String
+  pickupAt        DateTime
+  dropoffAt       DateTime
+  driverAge       Int?
+
+  pickupLocationId Int?
+  pickupLocationRef Location? @relation("QuotePickupLocation", fields: [pickupLocationId], references: [id])
+
+  rentadoraId Int?
+  rentadora   Rentadora? @relation("QuoteRentadora", fields: [rentadoraId], references: [id])
+
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  carModelId Int?
+  carModel   CarModel? @relation(fields: [carModelId], references: [id])
+
+  seasonId Int?
+  season   Season? @relation(fields: [seasonId], references: [id])
+
+  transmission TransmissionType?
+
+  billingDays         Int?
+  rentalDayRangeLabel String?
+
+  // Disponibilidad (manual) - vigencia 2h
+  availabilityRequestedAt DateTime?
+  availabilityExpiresAt   DateTime?
+
+  // --- SNAPSHOT: Bloque Venta (visible a agencia) ---
+  saleRateTypeId Int?
+  saleRateType   RateType? @relation("QuoteSaleRateType", fields: [saleRateTypeId], references: [id])
+  saleDailyPrice Decimal?  @db.Decimal(12, 2)
+  saleTotal      Decimal?  @db.Decimal(12, 2)
+
+  saleInsuranceDaily Decimal? @db.Decimal(12, 2)
+  saleFuelFee        Decimal? @db.Decimal(12, 2)
+  saleAirportFee     Decimal? @db.Decimal(12, 2)
+  saleTransferFee    Decimal? @db.Decimal(12, 2)
+  saleExtraDayFee    Decimal? @db.Decimal(12, 2)
+
+  commissionType   CommissionType?
+  commissionValue  Decimal?        @db.Decimal(12, 4)
+  commissionAmount Decimal?        @db.Decimal(12, 2)
+
+  // Fees/Seguros visibles (opcional; se puede detallar luego)
+  saleInsuranceTotal Decimal? @db.Decimal(12, 2)
+  saleFeesTotal      Decimal? @db.Decimal(12, 2)
+
+  requiresManualReview Boolean @default(false)
+  reviewReason         String?
+  calculationMetadata  Json?
+
+  // --- SNAPSHOT: Bloque Vendor (interno) ---
+  vendorId Int?
+  vendor   Vendor? @relation("QuoteSelectedVendor", fields: [vendorId], references: [id])
+
+  vendorPaymentRateTypeId Int?
+  vendorPaymentRateType   RateType? @relation("QuoteVendorPaymentRateType", fields: [vendorPaymentRateTypeId], references: [id])
+  vendorDailyPrice        Decimal?  @db.Decimal(12, 2)
+  vendorTotalCost         Decimal?  @db.Decimal(12, 2)
+  vendorInsuranceTotal    Decimal?  @db.Decimal(12, 2)
+  vendorFeesTotal         Decimal?  @db.Decimal(12, 2)
+
+  vendorInsuranceDaily Decimal? @db.Decimal(12, 2)
+  vendorFuelFee        Decimal? @db.Decimal(12, 2)
+  vendorAirportFee     Decimal? @db.Decimal(12, 2)
+  vendorTransferFee    Decimal? @db.Decimal(12, 2)
+  vendorExtraDayFee    Decimal? @db.Decimal(12, 2)
+
+  availabilityVendorId    Int?
+  availabilityVendor      Vendor?    @relation("QuoteAvailabilityVendor", fields: [availabilityVendorId], references: [id])
+  availabilityRentadoraId Int?
+  availabilityRentadora   Rentadora? @relation("QuoteAvailabilityRentadora", fields: [availabilityRentadoraId], references: [id])
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendorSelections QuoteVendorSelection[]
+  payments         Payment[]
+  reservation      Reservation?
+  statusHistory    StatusHistory[]
+  emailLogs        EmailLog[]
+
+  @@index([agencyId])
+  @@index([status])
+  @@index([clientId])
+  @@index([vendorId])
+  @@index([availabilityExpiresAt])
+  @@index([rentadoraId])
+  @@index([categoryId])
+  @@index([carModelId])
+  @@index([pickupLocationId])
+  @@index([availabilityVendorId])
+  @@index([availabilityRentadoraId])
+}
+
+// Selección manual de vendor/tarifa real para un quote
+model QuoteVendorSelection {
+  id      Int   @id @default(autoincrement())
+  quoteId Int
+  quote   Quote @relation(fields: [quoteId], references: [id])
+
+  selectedByUserId Int?
+  selectedBy       User? @relation("QuoteVendorSelectionSelectedBy", fields: [selectedByUserId], references: [id])
+
+  vendorId Int
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  rentadoraId Int?
+  rentadora   Rentadora? @relation(fields: [rentadoraId], references: [id])
+
+  vendorRateId Int?
+  vendorRate   VendorRate? @relation(fields: [vendorRateId], references: [id])
+
+  vendorPaymentRateTypeId Int?
+  vendorPaymentRateType   RateType? @relation("QuoteVendorSelectionPaymentRate", fields: [vendorPaymentRateTypeId], references: [id])
+
+  vendorDailyPrice       Decimal  @db.Decimal(12, 2)
+  vendorInsuranceDaily   Decimal? @db.Decimal(12, 2)
+  vendorFuelFee          Decimal? @db.Decimal(12, 2)
+  vendorAirportFee       Decimal? @db.Decimal(12, 2)
+  vendorTransferFee      Decimal? @db.Decimal(12, 2)
+  vendorExtraDayFee      Decimal? @db.Decimal(12, 2)
+  vendorTotalCost        Decimal  @db.Decimal(12, 2)
+  vendorInsuranceTotal   Decimal? @db.Decimal(12, 2)
+  vendorFeesTotal        Decimal? @db.Decimal(12, 2)
+
+  approvedOption   Boolean  @default(true)
+  selectedManually Boolean  @default(true)
+  selectedAt       DateTime @default(now())
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([quoteId])
+  @@index([vendorId])
+  @@index([rentadoraId])
+  @@index([vendorRateId])
+}
+
+model Payment {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  paymentKind PaymentKind
+
+  quoteId Int?
+  quote   Quote? @relation(fields: [quoteId], references: [id])
+
+  reservationId Int?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  status PaymentStatus @default(PENDING)
+
+  amount   Decimal @db.Decimal(12, 2)
+  currency String  @default("USD")
+
+  paymentDate      DateTime
+  paymentMethod    String
+  paymentReference String?
+
+  verifiedByUserId Int?
+  verifiedBy         User?    @relation("PaymentVerifiedBy", fields: [verifiedByUserId], references: [id])
+  verifiedAt         DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([quoteId])
+  @@index([reservationId])
+  @@index([status])
+  @@index([paymentKind])
+}
+
+model Reservation {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  quoteId Int   @unique
+  quote   Quote @relation(fields: [quoteId], references: [id])
+
+  status ReservationStatus @default(CREATED)
+
+  rentadoraId Int?
+  rentadora   Rentadora? @relation("ReservationRentadora", fields: [rentadoraId], references: [id])
+
+  categoryId Int?
+  category   Category? @relation("ReservationCategory", fields: [categoryId], references: [id])
+
+  carModelId Int?
+  carModel   CarModel? @relation("ReservationCarModel", fields: [carModelId], references: [id])
+
+  transmission TransmissionType?
+
+  saleRateTypeId Int?
+  saleRateType   RateType? @relation("ReservationSaleRateType", fields: [saleRateTypeId], references: [id])
+
+  vendorPaymentRateTypeId Int?
+  vendorPaymentRateType   RateType? @relation("ReservationVendorPaymentRate", fields: [vendorPaymentRateTypeId], references: [id])
+
+  saleDailyPrice   Decimal? @db.Decimal(12, 2)
+  saleTotal        Decimal  @db.Decimal(12, 2)
+  vendorTotalCost  Decimal  @db.Decimal(12, 2)
+  profitTotal      Decimal  @db.Decimal(12, 2)
+
+  commissionType   CommissionType?
+  commissionValue  Decimal?        @db.Decimal(12, 4)
+  commissionAmount Decimal?        @db.Decimal(12, 2)
+
+  paymentSnapshotStatus ReservationPaymentSnapshotStatus @default(CLIENT_CONFIRMED)
+  voucherStatus         VoucherSnapshotStatus            @default(NOT_ISSUED)
+
+  vendorId         Int?
+  vendor           Vendor? @relation(fields: [vendorId], references: [id])
+  vendorDailyPrice Decimal? @db.Decimal(12, 2)
+
+  voucherCode       String?
+  voucherUrl        String?
+  voucherReceivedAt DateTime?
+  voucherSentAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  statusHistory StatusHistory[]
+  emailLogs     EmailLog[]
+
+  @@index([agencyId])
+  @@index([status])
+  @@index([rentadoraId])
+  @@index([paymentSnapshotStatus])
+  @@index([voucherStatus])
+
+  payments Payment[]
+  voucher  Voucher?
+  documents Document[]
+}
+
+model Voucher {
+  id            Int         @id @default(autoincrement())
+  reservationId Int         @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+
+  vendorVoucherFile   String?
+  internalVoucherFile String?
+  cloudUrl              String?
+
+  sentAt DateTime?
+  status VoucherRecordStatus @default(PENDING)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents Document[]
+
+  @@index([status])
+}
+
+model Document {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  reservationId Int?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  voucherId Int?
+  voucher   Voucher? @relation(fields: [voucherId], references: [id])
+
+  kind     DocumentKind
+  fileKey  String?
+  cloudUrl String?
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([agencyId])
+  @@index([reservationId])
+  @@index([voucherId])
+  @@index([kind])
+}
+
+model StatusHistory {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  quoteId Int?
+  quote   Quote? @relation(fields: [quoteId], references: [id])
+
+  reservationId Int?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  /// Tipo lógico de entidad (ej. QUOTE, RESERVATION) para consultas transversales
+  entityType String?
+  entityId   Int?
+  /// Código de estado actual (alias semántico de toStatus)
+  statusCode String?
+
+  fromStatus String?
+  toStatus   String
+  reason     String?
+  metadata   Json?
+  notes      String?
+
+  createdByUserId Int?
+  createdBy       User?    @relation("StatusHistoryCreatedBy", fields: [createdByUserId], references: [id])
+  createdAt       DateTime @default(now())
+  changedAt       DateTime @default(now())
+
+  adminApproved           Boolean   @default(false)
+  adminApprovedByUserId   Int?
+  adminApprovedBy         User?     @relation("StatusHistoryAdminApproved", fields: [adminApprovedByUserId], references: [id])
+  adminApprovedAt         DateTime?
+
+  @@index([agencyId])
+  @@index([quoteId])
+  @@index([reservationId])
+  @@index([toStatus])
+  @@index([entityType, entityId])
+}
+
+model EmailLog {
+  id       Int    @id @default(autoincrement())
+  agencyId Int
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  quoteId Int?
+  quote   Quote? @relation(fields: [quoteId], references: [id])
+
+  reservationId Int?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  eventType EmailEventType
+  toEmail   String?
+  subject   String?
+  payload   Json?
+
+  status    String    @default("QUEUED") // QUEUED|SENT|FAILED (simple, se puede normalizar)
+  error     String?
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  /// Tipo lógico de entidad (ej. QUOTE, RESERVATION)
+  entityType String?
+  entityId   Int?
+  /// Etiqueta libre además de eventType (EmailEventType)
+  emailType String?
+  notes     String?
+
+  @@index([agencyId])
+  @@index([eventType])
+  @@index([quoteId])
+  @@index([reservationId])
+  @@index([entityType, entityId])
 }

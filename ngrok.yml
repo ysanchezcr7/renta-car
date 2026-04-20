@@ -1,0 +1,13 @@
+# Configuración ngrok para Agencias Passport (API validación fotos pasaporte)
+# El túnel "api" expone la API NestJS que corre en el host (ej. npm run start:dev en puerto PORT)
+# Ajusta "addr" al puerto que uses en .env (PORT, por defecto 3001)
+
+version: '2'
+
+tunnels:
+  api:
+    addr: host.docker.internal:3004
+    proto: http
+    inspect: true
+    # Opcional: dominio personalizado (cuenta ngrok)
+    # hostname: your-subdomain.ngrok-free.app

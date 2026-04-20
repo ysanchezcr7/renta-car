@@ -8,39 +8,54 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
-import { Role } from 'src/common/enums/rol.enum';
+import { Role } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserActiveInterface } from 'src/common/interfaces/user-active.interface';
 import { UserRepository } from './repository/user-repository/user-repository';
 import { sanitizeUser } from 'src/common/utils/utils';
 import { UpdateUserResponseDto } from './dto/response/update-user-response.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
 
-  async createProfile(registerDto: RegisterUserDto, referralBusinessId?: number) {
-    const { email, password, name, phone, imagen, role, lastName, deviceToken, middleName } = registerDto;
+  async createProfile(registerDto: RegisterUserDto, agencyId?: number) {
+    const {
+      email,
+      password,
+      firstName,
+      phone,
+      imagen,
+      role,
+      lastName,
+      deviceToken,
+      middleName,
+    } = registerDto;
     return await this.userRepo.createProfile(
       email,
       password,
-      name,
+      firstName,
       phone ?? '',
       imagen ?? '',
       role,
       lastName,
       deviceToken ?? '',
-      referralBusinessId,
+      agencyId,
       middleName,
     );
   }
 
-  async findAll(userActiv: UserActiveInterface) {
-    if (userActiv.role !== Role.OWNER) {
-      throw new ForbiddenException('No tienes permisos para acceder a esta información');
-    }
-    const users = await this.userRepo.findAll();
-    return users.map(({ password, ...rest }) => rest);
+  async findAll(query: PaginationQueryDto, userActiv: UserActiveInterface) {
+    const agencyId =
+      userActiv.role === Role.SUPER_ADMIN
+        ? undefined
+        : (userActiv.agencyId ?? undefined);
+    const { items, total } = await this.userRepo.findAll(query, agencyId);
+    return {
+      items: items.map((user) => sanitizeUser(user)),
+      total,
+    };
   }
 
   async findOneByEmail(email: string) {
@@ -51,7 +66,13 @@ export class UserService {
     return await this.userRepo.findByEmailWithPassword(email);
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userAct: UserActiveInterface) {
+    if (userAct.role === Role.AGENCY && userAct.id !== id) {
+      throw new ForbiddenException('No tienes permisos para acceder a este usuario');
+    }
+    if (userAct.role === Role.CUSTOMER) {
+      throw new ForbiddenException('No tienes permisos para acceder a esta información');
+    }
     const user = await this.userRepo.findOne(id);
     return user ? sanitizeUser(user) : null;
   }
@@ -65,7 +86,7 @@ export class UserService {
     if (!user) {
       throw new UnauthorizedException('User not found.');
     }
-    if (id !== userAct.id) {
+    if (userAct.role !== Role.SUPER_ADMIN && id !== userAct.id) {
       throw new ForbiddenException('You are not allowed to update this user.');
     }
     const updatedUser = await this.userRepo.update(id, updateUserDto);
@@ -79,7 +100,12 @@ export class UserService {
   async changePassword(userAct: UserActiveInterface, dto: ChangePasswordDto) {
     const { currentPassword, newPassword } = dto;
     const { id } = userAct;
-    const user = await this.findOne(id);
+    if (id == null) {
+      throw new BadRequestException(
+        'Use el flujo de agencia para cambiar la contraseña de la cuenta de agencia.',
+      );
+    }
+    const user = await this.userRepo.findOne(id);
     if (!user) {
       throw new NotFoundException('User not found.');
     }
@@ -98,6 +124,11 @@ export class UserService {
 
   async remove(user: UserActiveInterface) {
     const { id } = user;
+    if (id == null) {
+      throw new BadRequestException(
+        'Las cuentas de agencia no se eliminan desde el módulo de usuarios.',
+      );
+    }
     const userToDelete = await this.userRepo.findUserUnique(id);
     if (!userToDelete) {
       throw new NotFoundException('User not found');
@@ -114,7 +145,7 @@ export class UserService {
     return await this.userRepo.getAllStaffUsers();
   }
 
-  async getRoles() {
+  getRoles() {
     return Object.values(Role).map((role) => ({
       label: role.charAt(0) + role.slice(1).toLowerCase(),
       value: role,

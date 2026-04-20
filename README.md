@@ -1,14 +1,19 @@
 # Template-Nestjs
 
-Proyecto base con **autenticación JWT**, módulos **Auth** y **Users**, y **Prisma** (PostgreSQL) como ORM. Pensado para clonar y usar como plantilla en nuevos proyectos.
+Proyecto orientado a **agencias de viaje en EE.UU.** que necesitan agilizar el trabajo con imágenes de pasaportes. El objetivo principal es **automatizar la aprobación de fotos de pasaporte**: recibir una imagen desde el frontend, validarla con **Gemini** (requisitos oficiales USA) y, cuando esté integrado, con el **checker del gobierno** (p. ej. State Department Photo Tool), para devolver si la imagen sirve o no. Se irán añadiendo más servicios.
 
-## Servicios principales incluidos
+## Servicio principal: validación de imagen de pasaporte
 
-- **Auth**: registro, login con OTP por email, verificación de email, cambio de contraseña, recuperación de contraseña (forgot/reset).
-- **Users**: perfil (CRUD básico), actualización de perfil, eliminación de cuenta (soft delete).
-- **Prisma**: modelo `User` y `Otp`; fácil de extender con más modelos.
-- **JWT**: acceso protegido con Bearer token y roles (CUSTOMER, OWNER, SUPERADMIN).
-- **Mailer**: servicio mínimo (log en consola); sustituible por un envío real (nodemailer, MailerModule, etc.).
+- **POST /passport/validate-image**: recibe una imagen (multipart `image`), la analiza con **Gemini** (tamaño 2x2 in, cabeza 1–1⅜ in, fondo blanco, iluminación, expresión, etc.) y devuelve `approved`, `gemini`, `govCheck` y `recommendation`. El checker del gobierno está preparado como stub para integrar después (p. ej. con Playwright en [Photo Tool](https://tsg.phototool.state.gov/photo)).
+- Requiere **GEMINI_API_KEY** en `.env` para la validación con IA.
+
+## Resto de servicios (base del template)
+
+- **Auth**: registro, login con OTP por email, verificación de email, cambio/recuperación de contraseña.
+- **Users**: perfil (CRUD), actualización, eliminación de cuenta (soft delete).
+- **Prisma**: modelos `User` y `Otp`; fácil de extender.
+- **JWT**: rutas protegidas con Bearer y roles (CUSTOMER, OWNER, SUPERADMIN).
+- **Mailer**: servicio mínimo (log); sustituible por envío real.
 
 ## Requisitos
 
@@ -21,7 +26,7 @@ Proyecto base con **autenticación JWT**, módulos **Auth** y **Users**, y **Pri
 ```bash
 npm install --legacy-peer-deps
 cp .env.example .env
-# Editar .env con DATABASE_URL, JWT_SECRET y EMAIL_ENCRYPT_SECRET
+# Editar .env: DATABASE_URL, JWT_SECRET, EMAIL_ENCRYPT_SECRET, GEMINI_API_KEY (para validación de fotos)
 npm run prisma:generate
 npm run prisma:migrate
 npm run start:dev
@@ -40,11 +45,13 @@ npm run start:dev
 | `HOST_URL` | URL base de la API (para links de verificación) |
 | `EMAIL_VERIFICATION_URL` | Ruta de verificación de email (ej. `/auth/verify-email`) |
 | `VERIFY_EMAIL_SUCCESS_URL` / `VERIFY_EMAIL_ERROR_URL` | URLs de redirección tras verificar email |
+| `GEMINI_API_KEY` | API key de Google AI (Gemini) para validación de imágenes de pasaporte |
 
 ## Estructura relevante
 
 ```
 src/
+├── passport-image/ # Validación de fotos pasaporte USA (Gemini + gov checker)
 ├── auth/           # Login, registro, OTP, verificación email, cambio/recuperación contraseña
 ├── users/          # CRUD usuario, perfil, soft delete
 ├── prisma/         # PrismaService y módulo global

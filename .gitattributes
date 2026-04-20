@@ -1,0 +1,2 @@
+# Scripts de shell: siempre LF (Docker/Linux falla con CRLF en el shebang)
+*.sh text eol=lf

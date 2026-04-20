@@ -1,0 +1,85 @@
+# Renta Car API — entorno local con Docker
+#
+# Uso típico:
+#   cp .env.example .env   # y ajusta JWT_SECRET, EMAIL_ENCRYPT_SECRET, etc.
+#   docker compose up -d --build
+#   API: http://localhost:3001   Swagger: http://localhost:3001/api
+#
+# Base de datos: el servicio `api` usa el hostname `postgres` y puerto 5432 (red interna).
+# En .env para Docker Compose puedes definir DATABASE_URL o dejar que compose la inyecte (ver servicio api).
+#
+# Ngrok (túnel; opcional):
+#   docker compose --profile ngrok up -d
+#   Panel: http://localhost:4040
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: renta_car_postgres
+    restart: unless-stopped
+    ports:
+      - '${POSTGRES_PUBLISH_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-renta_car}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-renta_car}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: renta_car_api
+    restart: unless-stopped
+    ports:
+      - '${PORT:-3001}:3001'
+    env_file:
+      - .env
+    environment:
+      # Sobrescribe localhost del .env local: dentro de Docker el host es `postgres`.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-renta_car}?schema=public
+      PORT: '3001'
+      HOST_URL: ${HOST_URL:-http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # SKIP_PRISMA_MIGRATE=1 si quieres arrancar sin ejecutar migraciones
+    # environment:
+    #   SKIP_PRISMA_MIGRATE: '1'
+
+  ngrok:
+    profiles:
+      - ngrok
+    image: ngrok/ngrok:latest
+    container_name: renta_car_ngrok
+    restart: unless-stopped
+    command:
+      - start
+      - --all
+      - --config
+      - /etc/ngrok.yml
+    ports:
+      - '4040:4040'
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml:ro
+    env_file:
+      - .env
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

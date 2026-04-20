@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -13,14 +13,40 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('API Template - Auth & Users')
-    .setDescription('API base con autenticación JWT, registro, OTP y usuarios. Usa Prisma + PostgreSQL.')
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('API')
+    .setDescription('API base con módulos de autenticación y usuarios.')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'JWT en el header Authorization: Bearer <token>',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('Autenticación')
+    .addTag('Usuarios')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      docExpansion: 'none',
+      filter: true,
+      showRequestDuration: true,
+      tryItOutEnabled: true,
+    },
+    customSiteTitle: 'API Docs',
+    customCss: `
+        .swagger-ui .topbar { display: none }
+        .swagger-ui .info .title { font-size: 1.8rem }
+      `,
+  } as Record<string, unknown>);
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 /**
@@ -13,7 +18,9 @@ export class OwnerMembershipGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     if (!user || user.role !== 'OWNER') {
-      throw new ForbiddenException('Access denied. Only owners can perform this action.');
+      throw new ForbiddenException(
+        'Access denied. Only owners can perform this action.',
+      );
     }
     return true;
   }
